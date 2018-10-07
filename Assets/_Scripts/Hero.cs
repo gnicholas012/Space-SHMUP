@@ -16,8 +16,8 @@ public class Hero : MonoBehaviour
     public bool isFocusMode = false;
     public float shieldLevel = 1;
 
-	// Use this for initialization
-	void Awake()
+    // Use this for initialization
+    void Awake()
     {
 		if(S == null)
         {
@@ -27,7 +27,7 @@ public class Hero : MonoBehaviour
         {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S");
         }
-	}
+    }
 	
 	// Update is called once per frame
 	void Update()
