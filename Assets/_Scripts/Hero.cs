@@ -11,10 +11,13 @@ public class Hero : MonoBehaviour
     public float speedFocus = 10;
     public float rollMult = -45;
     public float pitchMult = 30;
+    public float radius = 1f;
 
     [Header("Set Dynamically")]
     public bool isFocusMode = false;
     public float shieldLevel = 1;
+    public float camWidth;
+    public float camHeight;
 
     // Use this for initialization
     void Awake()
@@ -27,6 +30,9 @@ public class Hero : MonoBehaviour
         {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S");
         }
+
+        camHeight = Camera.main.orthographicSize;
+        camWidth = camHeight * Camera.main.aspect;
     }
 	
 	// Update is called once per frame
@@ -53,6 +59,23 @@ public class Hero : MonoBehaviour
         {
             pos.x += xAxis * speed * Time.deltaTime;
             pos.y += yAxis * speed * Time.deltaTime;
+        }
+
+        if (pos.x > camWidth + radius)
+        {
+            pos.x = -camWidth - radius + 1;
+        }
+        if (pos.x < -camWidth - radius)
+        {
+            pos.x = camWidth + radius - 1;
+        }
+        if (pos.y > camHeight - radius)
+        {
+            pos.y = camHeight - radius;
+        }
+        if (pos.y < -camHeight + radius)
+        {
+            pos.y = -camHeight + radius;
         }
 
         transform.position = pos;
