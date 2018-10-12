@@ -1,45 +1,73 @@
 ﻿using System.Collections;
+
 using System.Collections.Generic;
+
 using UnityEngine;
+
+
 
 public class BoundsCheck : MonoBehaviour
 {
+
     [Header("Set in Inspector")]
+
     public float radius = 1f;
+
     public bool keepOnScreen = true;
 
+
+
     [Header("Set Dynamically")]
+
     public bool isOnScreen = true;
+
     public float camWidth;
+
     public float camHeight;
+
     public Vector3 pos;
 
+
+
     [HideInInspector]
+
     public bool offRight = false;
+
     public bool offLeft = false;
+
     public bool offUp = false;
+
     public bool offDown = false;
 
-    // Use this for initialization
+
     void Awake()
     {
         camHeight = Camera.main.orthographicSize;
+
         camWidth = camHeight * Camera.main.aspect;
-	}
-	
+
+    }
+
+
 	// Update is called once per frame
-	void LateUpdate()
+
+    void LateUpdate()
     {
         pos = transform.position;
+
         isOnScreen = true;
 
+
         if (pos.x > camWidth + radius)
+
         {
             pos.x = camWidth + radius;
             isOnScreen = false;
             offRight = true;
         }
+
         if (pos.x < -camWidth - radius)
+
         {
             pos.x = -camWidth - radius;
             isOnScreen = false;
@@ -69,6 +97,7 @@ public class BoundsCheck : MonoBehaviour
         }
     }
 
+
     private void OnDrawGizmos()
     {
         if(!Application.isPlaying)
@@ -78,4 +107,5 @@ public class BoundsCheck : MonoBehaviour
         Vector3 boundSize = new Vector3(camWidth * 2, camHeight * 2, .1f);
         Gizmos.DrawWireCube(Vector3.zero, boundSize);
     }
+
 }
