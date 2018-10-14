@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class Main : MonoBehaviour
 {
 
-    static Main S;
+    static public Main S;
 
 
 
@@ -74,5 +74,17 @@ public class Main : MonoBehaviour
 
 
         Invoke("SpawnEnemy", 1f / enemySpawnPerSecond);
-	}
+	
+    }
+
+
+    public void DelayRestart(float delay)
+    {
+	Invoke("Restart", delay);
+    }
+
+    public void Restart()
+    {
+	SceneManager.LoadScene("_Scene_0");
+    }
 }

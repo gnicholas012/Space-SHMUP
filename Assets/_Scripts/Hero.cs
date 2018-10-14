@@ -24,6 +24,8 @@ public class Hero : MonoBehaviour
     public float pitchMult = 30;
 
     public float radius = 1f;
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 40;
 
 
 
@@ -38,8 +40,9 @@ public class Hero : MonoBehaviour
 
 /*    [SerializeField]
     public float _shieldLevel = 1;
-*/
+
     private GameObject lastTriggerGo = null;
+*/
 
 /*    public float shieldLevel
     {
@@ -143,6 +146,11 @@ public class Hero : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
 
+
+	if(Input.GetKeyDown(KeyCode.Space))
+	{
+	    TempFire();
+	}
     }
 
     void OnTriggerEnter(Collider other)
@@ -154,5 +162,12 @@ public class Hero : MonoBehaviour
 	{
 	    graze += 1;
 	}
+    }
+    void TempFire()
+    {
+	GameObject projGO = Instantiate<GameObject>(projectilePrefab);
+	projGO.transform.position = transform.position;
+	Rigidbody rigidB = projGO.GetComponent<Rigidbody>();
+	rigidB.velocity = Vector3.up * projectileSpeed;
     }
 }

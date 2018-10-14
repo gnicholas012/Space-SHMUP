@@ -29,7 +29,7 @@ public class BoundsCheck : MonoBehaviour
 
 
 
-    [HideInInspector]
+//    [HideInInspector]
 
     public bool offRight = false;
 

@@ -17,6 +17,7 @@ public class Hitbox : MonoBehaviour
     public float startY;
 
     public float startZ;
+    public float gameRestartDelay = 2f;
 
     [SerializeField]
     public float _shieldLevel = 1;
@@ -36,6 +37,8 @@ public class Hitbox : MonoBehaviour
 	    {
 		Destroy(this.gameObject);
 		Destroy(Player.gameObject);
+
+		Main.S.DelayRestart(gameRestartDelay);
 	    }
 	}
     }
