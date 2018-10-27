@@ -18,8 +18,17 @@ public class Enemy : MonoBehaviour
 
     public int score = 100;
 
+    public float showDamageDuration = 0.1f;
+
 
     protected BoundsCheck bndCheck;
+
+    [Header("Set Dynamically: Enemy")]
+    public Color[] originalColors;
+    public Material[] materials;
+    public bool showingDamage = false;
+    public float damageDoneTime;
+    public bool notifiedOfDestruction = false;
 
 
 
@@ -38,12 +47,25 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         bndCheck = GetComponent<BoundsCheck>();
+	materials = Utils.GetAllMaterials(gameObject);
+	originalColors = new Color[materials.Length];
+
+	for(int i = 0; i < materials.Length; i++)
+	{
+		originalColors[i] = materials[i].color;
+	}
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+
+
+	if(showingDamage && Time.time > damageDoneTime)
+	{
+		UnShowDamage();
+	}
 
 
         if (bndCheck != null && bndCheck.offDown == true)
@@ -69,14 +91,48 @@ public class Enemy : MonoBehaviour
     {
 	GameObject otherGO = coll.gameObject;
 
-	if(otherGO.tag == "ProjectileHero")
+	switch(otherGO.tag)
 	{
-	    Destroy(otherGO);
-	    Destroy(gameObject);
+		case "ProjectileHero":
+			ProjectileHero p = otherGO.GetComponent<ProjectileHero>();
+
+			if(!bndCheck.isOnScreen)
+			{
+			    Destroy(otherGO);
+			    break;
+			}
+
+			health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+			ShowDamage();
+			if(health <= 0)
+			{
+			    Destroy(this.gameObject);
+			}
+			Destroy(otherGO);
+			break;
+
+		default:
+		    print("Enemy hit by non-projectileHero: " + otherGO.name);
+		    break;
 	}
-	else
+    }
+
+    void ShowDamage()
+    {
+	foreach(Material m in materials)
 	{
-	    print("Enemy hit by non-projectileHero: " + otherGO.name);
+	     m.color = Color.red;
 	}
+	showingDamage = true;
+	damageDoneTime = Time.time + showDamageDuration;
+    }
+
+    void UnShowDamage()
+    {
+	for(int i = 0; i < materials.Length; i++)
+	{
+	    materials[i].color = originalColors[i];
+	}
+	showingDamage = false;
     }
 }
