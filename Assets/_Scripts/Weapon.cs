@@ -164,4 +164,9 @@ public class Weapon : MonoBehaviour
 		lastShotTime = Time.time;
 		return(p);
 	}
+
+	public void SetActive(bool input)
+	{
+		gameObject.SetActive(input);
+	}
 }

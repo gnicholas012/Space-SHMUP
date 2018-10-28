@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     public int score = 100;
 
     public float showDamageDuration = 0.1f;
+    public float powerUpDropChance = 1f;
 
 
     protected BoundsCheck bndCheck;
@@ -96,7 +97,7 @@ public class Enemy : MonoBehaviour
 		case "ProjectileHero":
 			ProjectileHero p = otherGO.GetComponent<ProjectileHero>();
 
-			if(!bndCheck.isOnScreen)
+			if(bndCheck.offUp || bndCheck.offDown)
 			{
 			    Destroy(otherGO);
 			    break;
@@ -106,6 +107,11 @@ public class Enemy : MonoBehaviour
 			ShowDamage();
 			if(health <= 0)
 			{
+			    if(!notifiedOfDestruction)
+			    {
+				Main.S.EnemyDefeated(this);
+			    }
+                            notifiedOfDestruction = true;
 			    Destroy(this.gameObject);
 			}
 			Destroy(otherGO);

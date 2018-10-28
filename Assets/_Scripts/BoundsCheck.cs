@@ -53,6 +53,15 @@ public class BoundsCheck : MonoBehaviour
 
     void LateUpdate()
     {
+	offRight = false;
+
+	offLeft = false;
+
+	offUp = false;
+
+	offDown = false;
+
+
         pos = transform.position;
 
         isOnScreen = true;

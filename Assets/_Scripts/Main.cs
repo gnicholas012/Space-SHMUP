@@ -28,8 +28,27 @@ public class Main : MonoBehaviour
 
     private BoundsCheck bndCheck;
 
+    public GameObject prefabPowerUp;
+    public WeaponType[] powerUpFrequency = new WeaponType[] {WeaponType.blaster, WeaponType.blaster, WeaponType.shield, WeaponType.spread};
 
     static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
+
+    public void EnemyDefeated(Enemy e)
+    {
+	if(Random.value <= e.powerUpDropChance)
+	{
+	    int ndx = Random.Range(0, powerUpFrequency.Length);
+	    WeaponType puType = powerUpFrequency[ndx];
+
+	    GameObject go = Instantiate(prefabPowerUp) as GameObject;
+	    PowerUp pu = go.GetComponent<PowerUp>();
+	    pu.SetType(puType);
+
+	    Vector3 newPos =  e.transform.position;
+	    newPos.z = 0;
+	    pu.transform.position = newPos;
+	}
+    }
 
 
     void Awake()

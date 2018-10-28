@@ -66,7 +66,6 @@ public class Hitbox : MonoBehaviour
 
     }
 
-
     void OnTriggerEnter(Collider other)
     {
 	Transform rootT = other.gameObject.transform.root;

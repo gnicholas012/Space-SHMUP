@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-
     static public Hero S;
 
 
@@ -26,6 +25,8 @@ public class Hero : MonoBehaviour
     public float radius = 1f;
     public GameObject projectilePrefab;
     public float projectileSpeed = 40;
+    public Weapon[] weapons;
+    public Weapon[] weaponsF;
 
 
 
@@ -37,12 +38,15 @@ public class Hero : MonoBehaviour
     public float camWidth;
 
     public float camHeight;
+    public int weaponCounter = 0;
 
     public delegate void WeaponFireDelegate();
     public WeaponFireDelegate fireDelegate;
 
+    Hitbox A;
+
 /*    [SerializeField]
-    public float _shieldLevel = 1;
+    public float _shieldLevel;
 
     private GameObject lastTriggerGo = null;
 */
@@ -65,7 +69,7 @@ public class Hero : MonoBehaviour
     }
 */
     // Use this for initialization
-    void Awake()
+    void Start()
     {
 
 	if(S == null)
@@ -79,11 +83,16 @@ public class Hero : MonoBehaviour
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S");
         }
 
+	A = GameObject.Find("Hitbox").GetComponent<Hitbox>();
+
 	//fireDelegate += TempFire;
 
         camHeight = Camera.main.orthographicSize;
 
         camWidth = camHeight * Camera.main.aspect;
+
+	ClearWeapons();
+	weapons[0].SetType(WeaponType.blaster);
     }
 
 	
@@ -96,14 +105,26 @@ public class Hero : MonoBehaviour
         float yAxis = Input.GetAxis("Vertical");
 
 
-        if (Input.GetKey("right shift") == true || Input.GetKey("left shift") == true)
+        if (Input.GetKeyDown("right shift") == true || Input.GetKeyDown("left shift") == true)
         {
             isFocusMode = true;
+
+	    for(int i = 0; i <= weaponCounter; i++)
+	    {
+		weapons[i].SetActive(false);
+		weaponsF[i].SetActive(true);
+	    }
         }
 
-        else
+        if (Input.GetKeyUp("right shift") == true || Input.GetKeyUp("left shift") == true)
         {
             isFocusMode = false;
+
+	    for(int i = 0; i <= weaponCounter; i++)
+	    {
+		weaponsF[i].SetActive(false);
+		weapons[i].SetActive(true);
+	    }
         }
 
 
@@ -162,6 +183,7 @@ public class Hero : MonoBehaviour
 	{
 	    fireDelegate();
 	}
+
     }
 
     void OnTriggerEnter(Collider other)
@@ -172,6 +194,13 @@ public class Hero : MonoBehaviour
 	if(go.tag == "Enemy" || go.tag == "ProjectileEnemy")
 	{
 	    graze += 1;
+	}
+	else
+	{
+	    if(go.tag == "PowerUp")
+	    {
+		AbsorbPowerUp(go);
+	    }
 	}
     }
     void TempFire()
@@ -185,5 +214,80 @@ public class Hero : MonoBehaviour
 	proj.type = WeaponType.blaster;
 	float tSpeed = Main.GetWeaponDefinition(proj.type).velocity;
 	rigidB.velocity = Vector3.up * tSpeed;
+    }
+    public void AbsorbPowerUp(GameObject go)
+    {
+	PowerUp pu = go.GetComponent<PowerUp>();
+	
+	switch(pu.type)
+	{
+	    case WeaponType.shield:
+		A.shieldLevel++;
+		break;
+
+	    default:
+		if(pu.type == weapons[0].type)
+		{
+		    Weapon w = GetEmptyWeaponSlot();
+		    Weapon wf = GetEmptyWeaponSlotF();
+
+		    if(w != null)
+		    {
+			w.SetType(pu.type);
+			wf.SetType(pu.type);
+			weaponCounter++;
+
+			if(isFocusMode == true)
+			{
+			    weapons[weaponCounter].SetActive(false);
+			}
+			if(isFocusMode == false)
+			{
+			    weaponsF[weaponCounter].SetActive(false);
+			}
+		    }
+		}
+		else
+		{
+		    ClearWeapons();
+		    weapons[0].SetType(pu.type);
+		    weaponCounter = 0;
+		}
+		break;
+	}
+	pu.AbsorbedBy(this.gameObject);
+    }
+    Weapon GetEmptyWeaponSlot()
+    {
+	for(int i = 0; i < weapons.Length; i++)
+	{
+	    if(weapons[i].type == WeaponType.none)
+	    {
+		return (weapons[i]);
+	    }
+	}
+	return (null);
+    }
+    Weapon GetEmptyWeaponSlotF()
+    {
+	for(int i = 0; i < weaponsF.Length; i++)
+	{
+	    if(weaponsF[i].type == WeaponType.none)
+	    {
+		return (weaponsF[i]);
+	    }
+	}
+	return (null);
+    }
+    void ClearWeapons()
+    {
+	foreach(Weapon w in weapons)
+	{
+	    w.SetType(WeaponType.none);
+	}
+	foreach(Weapon w in weaponsF)
+	{
+	    w.SetType(WeaponType.none);
+	}
     }
 }
